@@ -10,6 +10,7 @@ public class TouchListener : MonoBehaviour
 {
     private int m_TouchID;
     private bool m_Touched = false;
+    public bool Selected { get { return m_Touched; } }
     private TouchManager manager;
 
     public OnTouchPress onTouchPress;
@@ -25,8 +26,13 @@ public class TouchListener : MonoBehaviour
     public Touch GetTouch()
     {
         if (m_Touched)
-            return Input.GetTouch(m_TouchID);
+            return manager.GetTouch(m_TouchID);
         else return new Touch();
+    }
+
+    public Vector3 GetTouchPosition()
+    {
+        return Camera.main.ScreenToWorldPoint(GetTouch().position);
     }
 
     public void RecieveTouchID(int ID)
