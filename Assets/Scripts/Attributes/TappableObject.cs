@@ -5,10 +5,16 @@ using UnityEngine;
 [RequireComponent(typeof(TouchListener))]
 public class TappableObject : MonoBehaviour {
 
-	// Use this for initialization
+    [SerializeField] Sprite m_spriteDefault;
+    [SerializeField] Sprite m_spritePressed;
+    [SerializeField] Sprite m_spriteActive;
+
 	void Start () {
-        GetComponent<TouchListener>().onTouchTap += OnTap;
-	}
+        SpriteRenderer renderer = GetComponent<SpriteRenderer>();
+        TouchListener listener = GetComponent<TouchListener>();
+        listener.onTouchPress += () => { renderer.sprite = m_spritePressed; };
+        listener.onTouchRelease += () => { renderer.sprite = m_spriteActive; };
+    }
 
     private void OnTap()
     {

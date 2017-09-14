@@ -8,24 +8,25 @@ public class SpinnableObject : MonoBehaviour
     TouchListener m_TouchListener;
     SpriteRenderer m_SpriteRenderer;
 
+    [SerializeField]
     Sprite m_SpriteActive;
-    Sprite m_SpriteInActive;
+    [SerializeField]
+    Sprite m_SpriteInactive;
 
     float m_angleOffset;
 
     private void Start()
     {
         m_TouchListener                 = GetComponent<TouchListener>();
-        m_TouchListener.onTouchPress   += () => { m_SpriteRenderer.sprite = m_SpriteInActive; };
-        m_TouchListener.onTouchRelease += () => { m_SpriteRenderer.sprite = m_SpriteInActive; };
+        m_SpriteRenderer                = GetComponent<SpriteRenderer>();
+        m_TouchListener.onTouchPress   += () => { m_SpriteRenderer.sprite = m_SpriteActive; };
+        m_TouchListener.onTouchRelease += () => { m_SpriteRenderer.sprite = m_SpriteInactive; };
     }
 
     void Update()
     {
         if (m_TouchListener.Selected)
-        {
             transform.rotation = Quaternion.Euler(0, 0, GetAngleToTouch() + m_angleOffset);
-        }
     }
 
     public float GetAngleToTouch()
@@ -36,10 +37,4 @@ public class SpinnableObject : MonoBehaviour
             angle += 360;
         return angle;
     }
-
-    public void OnDrawGizmos()
-    {
-        Gizmos.DrawSphere(transform.localPosition, 1);
-    }
-
 }
