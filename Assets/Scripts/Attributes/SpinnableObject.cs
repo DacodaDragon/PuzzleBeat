@@ -6,24 +6,25 @@ using UnityEngine;
 public class SpinnableObject : MonoBehaviour
 {
     TouchListener m_TouchListener;
+    SpriteRenderer m_SpriteRenderer;
+
+    Sprite m_SpriteActive;
+    Sprite m_SpriteInActive;
+
+    float m_angleOffset;
 
     private void Start()
     {
-        m_TouchListener = GetComponent<TouchListener>();
-        m_TouchListener.onTouchPress += OnTouch;
-    }
-
-    private void OnTouch()
-    {
-
+        m_TouchListener                 = GetComponent<TouchListener>();
+        m_TouchListener.onTouchPress   += () => { m_SpriteRenderer.sprite = m_SpriteInActive; };
+        m_TouchListener.onTouchRelease += () => { m_SpriteRenderer.sprite = m_SpriteInActive; };
     }
 
     void Update()
     {
         if (m_TouchListener.Selected)
         {
-
-            transform.rotation = Quaternion.Euler(0, 0, GetAngleToTouch());
+            transform.rotation = Quaternion.Euler(0, 0, GetAngleToTouch() + m_angleOffset);
         }
     }
 
