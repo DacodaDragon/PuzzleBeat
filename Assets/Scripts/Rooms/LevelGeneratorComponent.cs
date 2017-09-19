@@ -4,9 +4,19 @@ public class LevelGeneratorComponent : MonoBehaviour
 {
     [SerializeField] private int[] m_RoomIDList;
     [SerializeField] private GameObject[] m_RoomList;
+    [SerializeField] private RoomManager m_roomManager;
     LevelGenerator lv = new LevelGenerator();
 
+    [SerializeField]
     UnityEvent OnComplete;
+    [SerializeField]
+    UnityEvent<string> OnFail;
+
+
+    void Start()
+    {
+        GenerateLevel();
+    }
 
     public void GenerateLevel()
     {
@@ -33,7 +43,14 @@ public class LevelGeneratorComponent : MonoBehaviour
     {
         if (lv.Failed)
         {
-
+            Debug.LogError(lv.error.Message);
+            if (OnFail != null) OnFail.Invoke(lv.error.Message);
+            return;
+        }
+        else if (OnComplete != null)
+        {
+            m_roomManager.AddRooms(lv.Level);
+            OnComplete.Invoke();
         }
     }
 }

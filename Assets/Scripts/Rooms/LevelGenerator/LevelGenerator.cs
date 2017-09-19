@@ -17,6 +17,8 @@ public class LevelGenerator
     public bool Loaded { get { return m_Loaded; } }
     public bool Failed { get { return m_Failed; } }
 
+    public Room[] Level { get { return m_rooms.ToArray(); } }
+
     public LevelGenerator()
     {
 

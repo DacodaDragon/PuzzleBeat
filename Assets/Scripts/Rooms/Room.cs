@@ -26,6 +26,23 @@ public class Room : MonoBehaviour
     public PathNode EndNode { get { return m_roomPath.EndNode; } }
     public PathNode StartNode { get { return m_roomPath.StartNode; } }
 
+    public Vector2 GetPosition(float beat)
+    {
+        Vector2[] s = RoomPathUtility.ConvertToVectors(m_roomPath);
+        float SegmentCount = s.Length - 1;
+        float SegmentLength = BeatLength / SegmentCount;
+
+        int segment = 0;
+        float DistanceToTravelInSegment = beat;
+        while (DistanceToTravelInSegment > SegmentLength)
+        {
+            DistanceToTravelInSegment -= SegmentLength;
+            segment++;
+        }
+
+        return Vector2.Lerp(s[segment], s[segment+1], DistanceToTravelInSegment/SegmentLength);
+    }
+
     public void Enable()
     {
         gameObject.SetActive(false);

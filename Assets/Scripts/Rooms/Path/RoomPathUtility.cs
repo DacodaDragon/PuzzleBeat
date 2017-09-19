@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 public class RoomPathUtility
 {
@@ -20,5 +21,15 @@ public class RoomPathUtility
         if (roomPath.Path.Count == 0)
             throw new Exception("Room does not have any PathNodes");
         return roomPath.Path[roomPath.Path.Count - 1].Position;
+    }
+
+    static public Vector2[] ConvertToVectors(RoomPath roomPath)
+    {
+        List<Vector2> s = new List<Vector2>();
+        for (int i = 0; i < roomPath.Path.Count; i++)
+        {
+            s.Add(roomPath.Path[i].Position);
+        }
+        return s.ToArray();
     }
 }
