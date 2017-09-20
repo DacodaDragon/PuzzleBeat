@@ -78,7 +78,7 @@ public class LevelGenerator
         {
             int ID = IDs[i];
             Room room = FindRoom(ID);
-            CreateRoom(room);//.Disable();
+            CreateRoom(room).Disable();
             yield return new WaitForEndOfFrame();
         }
         if (onLevelLoadEnded != null)

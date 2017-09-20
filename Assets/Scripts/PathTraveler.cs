@@ -21,8 +21,13 @@ public class PathTraveler: MonoBehaviour {
 
 	void Update () {
         if (Traveling)
-       transform.position = m_roomManager.GetPositionInRoom(m_musicplayer.GetTimeInBeat());
-	}
+        {
+            Transform2DParams WorldPosition = m_roomManager.GetPositionInRoom(
+                m_musicplayer.GetTimeInBeat());
+            transform.position = WorldPosition.position;
+            transform.rotation = WorldPosition.rotation;
+        }
+    }
 
     public void StartTraveling()
     {

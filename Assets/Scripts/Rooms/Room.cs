@@ -14,7 +14,7 @@ public class Room : MonoBehaviour
 
     private RoomPath m_roomPath;
     public RoomPath Path { get { return m_roomPath; } }
-
+    
     void Awake()
     {
         m_roomPath = GetComponent<RoomPath>();
@@ -26,7 +26,7 @@ public class Room : MonoBehaviour
     public PathNode EndNode { get { return m_roomPath.EndNode; } }
     public PathNode StartNode { get { return m_roomPath.StartNode; } }
 
-    public Vector2 GetPosition(float beat)
+    public Transform2DParams GetPosition(float beat)
     {
         Vector2[] s = RoomPathUtility.ConvertToVectors(m_roomPath);
         float SegmentCount = s.Length - 1;
@@ -40,12 +40,14 @@ public class Room : MonoBehaviour
             segment++;
         }
 
-        return Vector2.Lerp(s[segment], s[segment+1], DistanceToTravelInSegment/SegmentLength);
+        Vector2 position = Vector2.Lerp(s[segment], s[segment + 1], DistanceToTravelInSegment / SegmentLength);
+        Quaternion rotation = Quaternion.Euler(0, 0, Vector2DMath.GetAngleBetween(s[segment], s[segment + 1])+90);
+        return new Transform2DParams(position, rotation);
     }
 
     public void Enable()
     {
-        gameObject.SetActive(false);
+        gameObject.SetActive(true);
     }
 
     public void Disable()

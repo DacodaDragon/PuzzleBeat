@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-
 using UnityEngine;
 
 public class RoomManager : MonoBehaviour
@@ -13,7 +12,7 @@ public class RoomManager : MonoBehaviour
         m_rooms = rooms.ToArray(); 
     }
 
-    public Vector2 GetPositionInRoom(float Beat)
+    public Transform2DParams GetPositionInRoom(float Beat)
     {
         int i = 0;
         while (Beat > m_rooms[i].BeatLength)
@@ -33,10 +32,16 @@ public class RoomManager : MonoBehaviour
 
     private void ActivateRoomsection(int RoomNumber)
     {
+        Debug.Log("Room: " + RoomNumber);
+
+        if (RoomNumber - 2 >= 0)
+            m_rooms[RoomNumber - 2].Disable();
         if (RoomNumber - 1 >= 0)
-            m_rooms[RoomNumber - 1].Disable();
+            m_rooms[RoomNumber - 1].Enable();
 
         m_rooms[RoomNumber].Enable();
-        m_rooms[RoomNumber+1].Enable();
+
+        if (RoomNumber + 1 < m_rooms.Length)
+            m_rooms[RoomNumber+1].Enable();
     }
 }
