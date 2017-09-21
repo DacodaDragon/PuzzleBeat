@@ -41,7 +41,7 @@ public class Room : MonoBehaviour
         }
 
         Vector2 position = Vector2.Lerp(s[segment], s[segment + 1], DistanceToTravelInSegment / SegmentLength);
-        Quaternion rotation = Quaternion.Euler(0, 0, Vector2DMath.GetAngleBetween(s[segment], s[segment + 1])+90);
+        Quaternion rotation = Quaternion.Euler(0, 0, Vector2DMath.GetAngleBetween(s[segment], s[segment + 1]));
         return new Transform2DParams(position, rotation);
     }
 
