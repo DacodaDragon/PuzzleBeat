@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(TouchListener))]
-public class SpinnableObject : MonoBehaviour
+public class PuzzleSpinner : PuzzleElement
 {
     TouchListener m_TouchListener;
     SpriteRenderer m_SpriteRenderer;
@@ -17,9 +17,10 @@ public class SpinnableObject : MonoBehaviour
 
     private void Start()
     {
-        m_TouchListener                 = GetComponent<TouchListener>();
-        m_SpriteRenderer                = GetComponent<SpriteRenderer>();
-        m_TouchListener.onTouchPress   += () => { m_SpriteRenderer.sprite = m_SpriteActive; };
+        m_TouchListener = GetComponent<TouchListener>();
+        m_SpriteRenderer = GetComponent<SpriteRenderer>();
+        m_TouchListener.onTouchPress += () => { m_SpriteRenderer.sprite = m_SpriteActive; };
+        m_TouchListener.onTouchPress += StartRotation;
         m_TouchListener.onTouchRelease += () => { m_SpriteRenderer.sprite = m_SpriteInactive; };
     }
 
@@ -27,6 +28,11 @@ public class SpinnableObject : MonoBehaviour
     {
         if (m_TouchListener.Selected)
             transform.rotation = Quaternion.Euler(0, 0, GetAngleToTouch() + m_angleOffset);
+    }
+
+    public void StartRotation()
+    {
+        m_angleOffset = GetAngleToTouch();
     }
 
     public float GetAngleToTouch()

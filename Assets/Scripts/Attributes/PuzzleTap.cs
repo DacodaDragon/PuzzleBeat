@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(TouchListener))]
-public class TappableObject : MonoBehaviour {
+public class PuzzleTap : PuzzleElement {
 
     [SerializeField] Sprite m_spriteDefault;
     [SerializeField] Sprite m_spritePressed;
