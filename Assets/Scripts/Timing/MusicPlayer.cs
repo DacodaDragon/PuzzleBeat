@@ -56,7 +56,7 @@ namespace DDR
 
         private void UpdateTime()
         {
-            m_time += Time.deltaTime * m_AudioSource.pitch * GetMixerPitch();
+            m_time += Time.deltaTime * GetSongSpeed();
         }
 
         public void UpdateTimer(OnBeatDelegate beatDelegate, ref float Timer, float step)
@@ -77,6 +77,11 @@ namespace DDR
         public float GetTimeInBeat()
         {
             return BPM.TimeToBeat(m_time + m_timeOffset, m_bmp);
+        }
+
+        public float GetSongSpeed()
+        {
+            return m_AudioSource.pitch * GetMixerPitch();
         }
 
         public float GetBmp()
