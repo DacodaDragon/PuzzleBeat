@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace DDR
 {
@@ -32,7 +33,7 @@ namespace DDR
 
         public void Start()
         {
-            From = To = Current = GetComponent<Renderer>().material.color = StaticColor;
+            From = To = Current = GetComponent<Image>().color = StaticColor;
             MusicPlayer s = FindObjectOfType<MusicPlayer>();
             switch (count)
             {
@@ -62,7 +63,7 @@ namespace DDR
         {
             lerpValue += Mathf.Min(1, Time.deltaTime * 6);
             Current = Color.Lerp(From, To, lerpValue);
-            GetComponent<Renderer>().material.color = Current;
+            GetComponent<Image>().color = Current;
         }
 
         public void SetColor(Color color)
