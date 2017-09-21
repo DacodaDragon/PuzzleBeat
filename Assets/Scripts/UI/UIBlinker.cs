@@ -18,6 +18,8 @@ namespace DDR
 
         float lerpValue = 0;
 
+        MusicPlayer musicPlayer;
+
         bool isPressed;
 
         enum Count
@@ -34,13 +36,13 @@ namespace DDR
         public void Start()
         {
             From = To = Current = GetComponent<Image>().color = StaticColor;
-            MusicPlayer s = FindObjectOfType<MusicPlayer>();
+            musicPlayer = FindObjectOfType<MusicPlayer>();
             switch (count)
             {
-                case Count.whole: s.OnWhole += Blitz; break;
-                case Count.halve: s.OnHalve += Blitz; break;
-                case Count.third: s.OnThird += Blitz; break;
-                case Count.fourth: s.OnFourth += Blitz; break;
+                case Count.whole: musicPlayer.OnWhole += Blitz; break;
+                case Count.halve: musicPlayer.OnHalve += Blitz; break;
+                case Count.third: musicPlayer.OnThird += Blitz; break;
+                case Count.fourth: musicPlayer.OnFourth += Blitz; break;
             }
             
         }
@@ -61,7 +63,7 @@ namespace DDR
 
         public void Update()
         {
-            lerpValue += Mathf.Min(1, Time.deltaTime * 6);
+            lerpValue += Mathf.Min(1, Time.deltaTime * BPM.BeatToTime(4*musicPlayer.GetSongSpeed(),musicPlayer.GetBmp()));
             Current = Color.Lerp(From, To, lerpValue);
             GetComponent<Image>().color = Current;
         }
