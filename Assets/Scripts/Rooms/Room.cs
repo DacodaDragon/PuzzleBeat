@@ -5,26 +5,23 @@ using UnityEngine;
 [RequireComponent(typeof(RoomPath))]
 public class Room : MonoBehaviour
 {
-    [SerializeField]
-    private string IDString;
-    [SerializeField]
-    private int IDNumber; 
-    [SerializeField]
-    private int m_LengthInBeats;
+    [SerializeField] private string m_IDString;
+    [SerializeField] private int    m_IDNumber; 
+    [SerializeField] private int    m_LengthInBeats;
 
     private RoomPath m_roomPath;
-    public RoomPath Path { get { return m_roomPath; } }
-    
+
+
+    public int ID               { get { return m_IDNumber; } }
+    public int BeatLength       { get { return m_LengthInBeats; } set { m_LengthInBeats = value; } }
+    public RoomPath Path        { get { return m_roomPath; } }
+    public PathNode EndNode     { get { return m_roomPath.EndNode; } }
+    public PathNode StartNode   { get { return m_roomPath.StartNode; } }
+
     void Awake()
     {
         m_roomPath = GetComponent<RoomPath>();
     }
-
-    public int ID { get { return IDNumber; } }
-
-    public int BeatLength { get { return m_LengthInBeats; } set { m_LengthInBeats = value; } }
-    public PathNode EndNode { get { return m_roomPath.EndNode; } }
-    public PathNode StartNode { get { return m_roomPath.StartNode; } }
 
     public Transform2DParams GetPosition(float beat)
     {
