@@ -9,7 +9,7 @@ public class PuzzleElement : MonoBehaviour {
     private bool m_IsSolved;
     private OnSolveDelegate OnSolve;
 
-    event OnSolveDelegate OnSolveEvent
+    public event OnSolveDelegate OnSolveEvent
     {
         add { OnSolve += value; }
         remove { OnSolve -= value; }
