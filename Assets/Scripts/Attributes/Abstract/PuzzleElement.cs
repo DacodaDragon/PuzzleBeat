@@ -2,15 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public delegate void OnSolve(PuzzleElement element);
+public delegate void OnSolveDelegate(PuzzleElement element);
 
 public class PuzzleElement : MonoBehaviour {
 
-    public OnSolve onSolve;
+    private bool m_IsSolved;
+    private OnSolveDelegate OnSolve;
 
-    public void Solve()
+    event OnSolveDelegate OnSolveEvent
     {
-        if (onSolve != null)
-            onSolve(this);
+        add { OnSolve += value; }
+        remove { OnSolve -= value; }
+    }
+
+    public bool IsSolved { get { return m_IsSolved; } }
+
+    // We can only solve this once
+    protected void Solve()
+    {
+        if (!m_IsSolved)
+        {
+            if (OnSolve != null)
+                OnSolve(this);
+            m_IsSolved = true;
+        }
     }
 }
