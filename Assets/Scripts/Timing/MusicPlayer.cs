@@ -1,8 +1,6 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
-
 
 namespace DDR
 {
@@ -15,28 +13,28 @@ namespace DDR
     public class MusicPlayer : MonoBehaviour
     {
         private AudioSource m_AudioSource;
-        private AudioMixer  m_AudioMixer;
+        private AudioMixer m_AudioMixer;
 
         [SerializeField] private float m_time;
         [SerializeField] private float m_bmp;
         [SerializeField] private float m_timeOffset;
         [SerializeField] private float m_SpeedMultiplier;
-        [SerializeField] private bool  m_timing;
+        [SerializeField] private bool m_timing;
 
-        private float m_PreviousSpeed;
-        private bool SpeedChanged       { get { return m_PreviousSpeed == GetSongSpeed(); } }
-        public float SpeedMultiplier    { get { return m_SpeedMultiplier; } }
+        private float m_previousSpeed;
+        private bool SpeedChanged    { get { return m_previousSpeed != GetSongSpeed(); } }
+        public float SpeedMultiplier { get { return m_SpeedMultiplier; } }
 
         // This needs to be done differently. IDEA: Make a class that handles 
         // =======================================================================================================================
-        public OnBeatDelegate m_OnWholeBeatsEvent;
-        public OnBeatDelegate m_OnHalveBeatsEvent;
-        public OnBeatDelegate m_OnThirdBeatsEvent;
-        public OnBeatDelegate m_OnFourthBeatsEvent;
+        private OnBeatDelegate m_OnWholeBeatsEvent;
+        private OnBeatDelegate m_OnHalveBeatsEvent;
+        private OnBeatDelegate m_OnThirdBeatsEvent;
+        private OnBeatDelegate m_OnFourthBeatsEvent;
 
-        public event OnBeatDelegate OnWholeBeats  { add { m_OnWholeBeatsEvent  += value; } remove { m_OnWholeBeatsEvent  -= value; } }
-        public event OnBeatDelegate OnHalveBeats  { add { m_OnHalveBeatsEvent  += value; } remove { m_OnHalveBeatsEvent  -= value; } }
-        public event OnBeatDelegate OnThirdBeats  { add { m_OnThirdBeatsEvent  += value; } remove { m_OnThirdBeatsEvent  -= value; } }
+        public event OnBeatDelegate OnWholeBeats { add { m_OnWholeBeatsEvent += value; } remove { m_OnWholeBeatsEvent -= value; } }
+        public event OnBeatDelegate OnHalveBeats { add { m_OnHalveBeatsEvent += value; } remove { m_OnHalveBeatsEvent -= value; } }
+        public event OnBeatDelegate OnThirdBeats { add { m_OnThirdBeatsEvent += value; } remove { m_OnThirdBeatsEvent -= value; } }
         public event OnBeatDelegate OnFourthBeats { add { m_OnFourthBeatsEvent += value; } remove { m_OnFourthBeatsEvent -= value; } }
 
         private float m_NextWhole;
@@ -44,6 +42,7 @@ namespace DDR
         private float m_NextThird;
         private float m_NextFourth;
         // =======================================================================================================================
+
 
         private void Awake()
         {
@@ -55,13 +54,12 @@ namespace DDR
             m_AudioSource = GetComponent<AudioSource>();
             m_AudioMixer = m_AudioSource.outputAudioMixerGroup.audioMixer;
             OnWholeBeats += Syncronize;
-            m_PreviousSpeed = GetSongSpeed();
+            m_previousSpeed = GetSongSpeed();
         }
 
         public void Update()
         {
             UpdateTime();
-
             // Update some timers.
             if (GetSongSpeed() > 0)
             {
@@ -78,7 +76,7 @@ namespace DDR
                 ReveseUpdateTimer(m_OnFourthBeatsEvent, ref m_NextFourth, 0.25f);
             }
 
-            m_PreviousSpeed = GetSongSpeed();
+            m_previousSpeed = GetSongSpeed();
         }
 
         private void UpdateTime()
@@ -86,27 +84,26 @@ namespace DDR
             m_time += Time.deltaTime * GetSongSpeed();
         }
 
-        private void UpdateTimer(OnBeatDelegate beatDelegate, ref float Timer, float step)
+        private void UpdateTimer(OnBeatDelegate beatDelegate, ref float timer, float step)
         {
-            if (GetTimeInBeat() > Timer)
+            if (GetTimeInBeat() > timer)
             {
-                Timer += step;
-                if (SpeedChanged)
-                    if (beatDelegate != null)
-                        beatDelegate.Invoke();
+                timer += step;
+                if (beatDelegate != null && !SpeedChanged)
+                    beatDelegate.Invoke();
             }
         }
 
-        private void ReveseUpdateTimer(OnBeatDelegate beatDelegate, ref float Timer, float step)
+        private void ReveseUpdateTimer(OnBeatDelegate beatDelegate, ref float timer, float step)
         {
-            if (GetTimeInBeat() < Timer)
+            if (GetTimeInBeat() < timer)
             {
-                Timer -= step;
-                if (SpeedChanged)
-                    if (beatDelegate != null)
-                        beatDelegate.Invoke();
+                timer -= step;
+                if (beatDelegate != null && !SpeedChanged)
+                    beatDelegate.Invoke();
             }
         }
+
 
         public float GetTime()
         {
@@ -140,19 +137,21 @@ namespace DDR
             m_time = m_AudioSource.time;
         }
 
+        /// <param name="Pitch">float value from -3 to 3 </param>
+        public void SetPitch(float pitch)
+        {
+            m_AudioSource.pitch = pitch;
+        }
+
         private float GetMixerPitch()
         {
-
             if (m_AudioMixer)
             {
-
                 float pitch;
-                m_AudioMixer.GetFloat("Pitch", out pitch);
-
-                // Pitch from audio mixers are represented as 0%-300%
-                return pitch; // Convert to 0-3 for accurate timescaling
+                if (m_AudioMixer.GetFloat("Pitch", out pitch)) return pitch;
             }
-            else return 1; // play at normal speed if audiosource is not connected to a mixer.
+            // play at normal speed if no mixer is connected or "Pitch" parameter isn't exposed / doesn't exist
+            return 1;
         }
     }
 }
