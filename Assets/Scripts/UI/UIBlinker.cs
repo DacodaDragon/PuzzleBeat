@@ -5,10 +5,8 @@ using UnityEngine.UI;
 
 namespace DDR
 {
-    public class UIBlinker: MonoBehaviour
+    public class UIBlinker : MonoBehaviour
     {
-        public Color TapColor;
-        public Color HoldColor;
         public Color StaticColor;
         public Color BlitzColor;
 
@@ -39,33 +37,26 @@ namespace DDR
             musicPlayer = FindObjectOfType<MusicPlayer>();
             switch (count)
             {
-                case Count.whole: musicPlayer.OnWhole += Blitz; break;
-                case Count.halve: musicPlayer.OnHalve += Blitz; break;
-                case Count.third: musicPlayer.OnThird += Blitz; break;
-                case Count.fourth: musicPlayer.OnFourth += Blitz; break;
+                case Count.whole: musicPlayer.AddBeatListener(Blitz, 1f); break;
+                case Count.halve: musicPlayer.AddBeatListener(Blitz, 0.5f); break;
+                case Count.third: musicPlayer.AddBeatListener(Blitz, 1f / 3f); break;
+                case Count.fourth: musicPlayer.AddBeatListener(Blitz, 0.25f); break;
             }
-            
+
         }
 
         public void Blitz()
         {
-            if (!isPressed)
-            {
-                // Bork bork I am a shork.. what?
-                SetColor(BlitzColor);
-                LerpToColor(StaticColor);
-            }
-            else
-            {
-                OnTap();
-            }
+            // Bork bork I am a shork.. what?
+
+            SetColor(BlitzColor);
+            LerpToColor(StaticColor);
         }
 
         public void Update()
         {
-            lerpValue += Mathf.Min(1, Time.deltaTime * BPM.BeatToTime(4*musicPlayer.GetSongSpeed(),musicPlayer.GetBmp()));
-            Current = Color.Lerp(From, To, lerpValue);
-            GetComponent<Image>().color = Current;
+            lerpValue += (Time.deltaTime * musicPlayer.SongSpeed) / BPM.BeatToTime(1, musicPlayer.Bpm);
+            GetComponent<Image>().color = Color.Lerp(From, To, lerpValue);
         }
 
         public void SetColor(Color color)
@@ -78,14 +69,9 @@ namespace DDR
         {
             From = Current;
             To = color;
-            lerpValue = 0;
-        }
-
-        public void OnTap()
-        {
-            isPressed = true;
-            SetColor(TapColor);
-            LerpToColor(HoldColor);
+            if (musicPlayer.SongSpeed > 0)
+                lerpValue = 0;
+            else lerpValue = 1;
         }
 
         public void OnRelease()

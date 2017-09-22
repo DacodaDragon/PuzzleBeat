@@ -23,7 +23,7 @@ public class PathTraveler: MonoBehaviour {
         if (Traveling)
         {
             Transform2DParams WorldPosition = m_roomManager.GetPositionInRoom(
-                m_musicplayer.GetTimeInBeat());
+                m_musicplayer.TimeInBeats);
             transform.position = WorldPosition.position;
             transform.rotation = WorldPosition.rotation;
         }
