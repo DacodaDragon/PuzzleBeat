@@ -12,11 +12,12 @@ namespace DDR
     {
         private AudioSource m_AudioSource;
         private AudioMixer m_AudioMixer;
+
         [SerializeField] private float m_time;
         [SerializeField] private float m_bmp;
         [SerializeField] private float m_timeOffset;
         [SerializeField] private float m_SpeedMultiplier;
-        [SerializeField] private bool  m_timing;
+        [SerializeField] private bool m_timing;
 
         public OnBeatDelegate OnWhole;
         public OnBeatDelegate OnHalve;
@@ -27,6 +28,8 @@ namespace DDR
         private float NextHalve;
         private float NextThird;
         private float NextFourth;
+
+        private float PreviousSpeed;
 
         private float[] spectrumData;
         public float SpeedMultiplier { get { return m_SpeedMultiplier; } }
@@ -41,6 +44,7 @@ namespace DDR
             m_AudioSource = GetComponent<AudioSource>();
             m_AudioMixer = m_AudioSource.outputAudioMixerGroup.audioMixer;
             OnWhole += Syncronize;
+            PreviousSpeed = GetSongSpeed();
         }
 
         public void Update()
@@ -48,10 +52,22 @@ namespace DDR
             UpdateTime();
 
             // Update some timers.
-            UpdateTimer(OnWhole, ref NextWhole,    1);
-            UpdateTimer(OnHalve, ref NextHalve,    0.5f);
-            UpdateTimer(OnThird, ref NextThird,    1f / 3f);
-            UpdateTimer(OnFourth, ref NextFourth,  0.25f);
+            if (GetSongSpeed() > 0)
+            {
+                UpdateTimer(OnWhole, ref NextWhole, 1);
+                UpdateTimer(OnHalve, ref NextHalve, 0.5f);
+                UpdateTimer(OnThird, ref NextThird, 1f / 3f);
+                UpdateTimer(OnFourth, ref NextFourth, 0.25f);
+            }
+            else
+            {
+                ReveseUpdateTimer(OnWhole, ref NextWhole, 1);
+                ReveseUpdateTimer(OnHalve, ref NextHalve, 0.5f);
+                ReveseUpdateTimer(OnThird, ref NextThird, 1f / 3f);
+                ReveseUpdateTimer(OnFourth, ref NextFourth, 0.25f);
+            }
+
+            PreviousSpeed = GetSongSpeed();
         }
 
         private void UpdateTime()
@@ -59,14 +75,31 @@ namespace DDR
             m_time += Time.deltaTime * GetSongSpeed();
         }
 
-        public void UpdateTimer(OnBeatDelegate beatDelegate, ref float Timer, float step)
+        private void UpdateTimer(OnBeatDelegate beatDelegate, ref float Timer, float step)
         {
             if (GetTimeInBeat() > Timer)
             {
                 Timer += step;
-                if (beatDelegate != null)
-                    beatDelegate.Invoke();
+                if (SpeedChanged())
+                    if (beatDelegate != null)
+                        beatDelegate.Invoke();
             }
+        }
+
+        private void ReveseUpdateTimer(OnBeatDelegate beatDelegate, ref float Timer, float step)
+        {
+            if (GetTimeInBeat() < Timer)
+            {
+                Timer -= step;
+                if (SpeedChanged())
+                    if (beatDelegate != null)
+                        beatDelegate.Invoke();
+            }
+        }
+
+        private bool SpeedChanged()
+        {
+            return PreviousSpeed == GetSongSpeed();
         }
 
         public float GetTime()
@@ -106,7 +139,7 @@ namespace DDR
 
             if (m_AudioMixer)
             {
-                
+
                 float pitch;
                 m_AudioMixer.GetFloat("Pitch", out pitch);
 
