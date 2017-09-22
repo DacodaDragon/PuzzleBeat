@@ -11,7 +11,6 @@ public class Room : MonoBehaviour
 
     private RoomPath m_roomPath;
 
-
     public int ID               { get { return m_IDNumber; } }
     public int BeatLength       { get { return m_LengthInBeats; } set { m_LengthInBeats = value; } }
     public RoomPath Path        { get { return m_roomPath; } }
@@ -21,6 +20,16 @@ public class Room : MonoBehaviour
     void Awake()
     {
         m_roomPath = GetComponent<RoomPath>();
+    }
+
+    public void Enable()
+    {
+        gameObject.SetActive(true);
+    }
+
+    public void Disable()
+    {
+        gameObject.SetActive(false);
     }
 
     public Transform2DParams GetPosition(float beat)
@@ -40,15 +49,5 @@ public class Room : MonoBehaviour
         Vector2 position = Vector2.Lerp(s[segment], s[segment + 1], DistanceToTravelInSegment / SegmentLength);
         Quaternion rotation = Quaternion.Euler(0, 0, Vector2DMath.GetAngleBetween(s[segment], s[segment + 1]));
         return new Transform2DParams(position, rotation);
-    }
-
-    public void Enable()
-    {
-        gameObject.SetActive(true);
-    }
-
-    public void Disable()
-    {
-        gameObject.SetActive(false);
     }
 }
