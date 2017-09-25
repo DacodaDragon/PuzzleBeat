@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DDR
+namespace DDR.TimeManagement
 {
     public class BeatObserverManager
     {
@@ -20,9 +20,15 @@ namespace DDR
             }
 
             // Add new BeatObserver if there is none for the measure yet. 
-            BeatObserver observer = new BeatObserver(beatMeasure);
+            BeatObserver observer = CreateNewBeatObserver(beatMeasure);
             observer.OnTrigger += function;
+        }
+
+        private BeatObserver CreateNewBeatObserver(float beatMeasure)
+        {
+            BeatObserver observer = new BeatObserver(beatMeasure);
             m_Observers.Add(observer);
+            return observer;
         }
 
         public void UnSubscribe(OnBeatDelegate function, float beatMeasure)
