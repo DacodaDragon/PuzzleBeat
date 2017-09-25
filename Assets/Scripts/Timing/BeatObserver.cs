@@ -15,24 +15,31 @@
         {
             m_measure         = beatMeasure;
             m_nextMeasure     = currentTime + beatMeasure;
-            m_previousMeasure = currentTime - beatMeasure;
+            m_previousMeasure = currentTime;
         }
 
         public void Update(float timeInBeats)
         {
-            // Time forwards!
+            CheckTimeForward(timeInBeats);
+            CheckTimeBackward(timeInBeats);
+        }
+
+        private void CheckTimeForward(float timeInBeats)
+        {
             if (timeInBeats > m_nextMeasure)
             {
-                m_nextMeasure     += m_measure;
+                m_nextMeasure += m_measure;
                 m_previousMeasure += m_measure;
                 Trigger();
             }
+        }
 
-            // Time backwards!
+        private void CheckTimeBackward(float timeInBeats)
+        {
             if (timeInBeats < m_previousMeasure)
             {
-                m_nextMeasure     += m_measure;
-                m_previousMeasure += m_measure;
+                m_nextMeasure -= m_measure;
+                m_previousMeasure -= m_measure;
                 Trigger();
             }
         }
