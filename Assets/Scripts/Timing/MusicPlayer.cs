@@ -1,14 +1,14 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Audio;
+using DDR.TimeManagement;
 
 namespace DDR
 {
     public delegate void OnBeatDelegate();
     public delegate void OnSongBeginDelegate();
     public delegate void OnSongEndDelegate();
-    public delegate void OnSongPause();
-    public delegate void OnSongResume();
+    public delegate void OnSongPauseDelegate();
+    public delegate void OnSongResumeDelegate();
 
     public class MusicPlayer : MonoBehaviour
     {
@@ -16,13 +16,17 @@ namespace DDR
         private AudioMixer m_AudioMixer;
 
         [SerializeField] private float m_time;
+        [SerializeField] private float m_timeInBeats;
+        [SerializeField] private float m_deltaTime;
         [SerializeField] private float m_bmp;
         [SerializeField] private float m_timeOffset;
+        [SerializeField] private bool  m_playing;
 
         public float Time { get { return m_time; } }
-        public float TimeInBeats { get { return BPM.TimeToBeat(m_time + m_timeOffset, m_bmp); } }
+        public float TimeInBeats { get { return BPM.TimeToBeat(m_time - m_timeOffset,m_bmp); } }
         public float SongSpeed { get { return m_AudioSource.pitch * GetMixerPitch(); } }
         public float Bpm { get { return m_bmp; } }
+        public float DeltaTime { get { return m_deltaTime; } }
 
         private float m_previousSpeed;
         private bool SpeedChanged { get { return m_previousSpeed != SongSpeed; } }
@@ -44,19 +48,45 @@ namespace DDR
 
         public void Update()
         {
-            UpdateTime();
+            if (m_playing)
+            {
+                UpdateTime();
+                beatObserverManager.Update(TimeInBeats);
+            }
             m_previousSpeed = SongSpeed;
         }
 
         private void UpdateTime()
         {
-            m_time += UnityEngine.Time.deltaTime * SongSpeed;
+            float newTime = m_time + (UnityEngine.Time.deltaTime * SongSpeed);
+            m_deltaTime = newTime - m_time;
+            m_time = newTime;
         }
 
         public void Play()
         {
             m_AudioSource.Play();
             m_time = m_AudioSource.time;
+            m_playing = true;
+        }
+
+        public void Pause()
+        {
+            m_AudioSource.Pause();
+            m_playing = false;
+        }
+
+        public void UnPause()
+        {
+            m_AudioSource.UnPause();
+            m_playing = true;
+            Syncronize();
+        }
+
+        public void Stop()
+        {
+            m_playing = false;
+            m_AudioSource.Stop();
         }
 
         public void Syncronize()
