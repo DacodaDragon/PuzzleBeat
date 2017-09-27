@@ -7,78 +7,52 @@ namespace DDR
 {
     public class UIBlinker : MonoBehaviour
     {
-        public Color StaticColor;
-        public Color BlitzColor;
+        [SerializeField] Color m_StaticColor;
+        [SerializeField] Color m_BlitzColor;
 
-        Color From;
-        Color To;
-        Color Current;
+        Color m_BeginColor;
+        Color m_EndColor;
 
-        float lerpValue = 0;
+        float m_lerpValue = 0;
 
-        MusicPlayer musicPlayer;
-
-        bool isPressed;
-
-        enum Count
-        {
-            whole,
-            halve,
-            third,
-            fourth
-        }
+        MusicPlayer m_MusicPlayer;
 
         [SerializeField]
-        Count count;
+        float Count;
 
         public void Start()
         {
-            From = To = Current = GetComponent<Image>().color = StaticColor;
-            musicPlayer = FindObjectOfType<MusicPlayer>();
-            switch (count)
-            {
-                case Count.whole: musicPlayer.AddBeatListener(Blitz, 1f); break;
-                case Count.halve: musicPlayer.AddBeatListener(Blitz, 0.5f); break;
-                case Count.third: musicPlayer.AddBeatListener(Blitz, 1f / 3f); break;
-                case Count.fourth: musicPlayer.AddBeatListener(Blitz, 0.25f); break;
-            }
-
+            Time time = new Time();
+            m_BeginColor = m_EndColor = GetComponent<Image>().color = m_StaticColor;
+            m_MusicPlayer = FindObjectOfType<MusicPlayer>();
+            m_MusicPlayer.AddBeatListener(Blitz, 1);
         }
 
         public void Blitz()
         {
             // Bork bork I am a shork.. what?
-
-            SetColor(BlitzColor);
-            LerpToColor(StaticColor);
+            SetColor(m_BlitzColor);
+            LerpToColor(m_StaticColor);
         }
 
         public void Update()
         {
-            lerpValue += (Time.deltaTime * musicPlayer.SongSpeed) / BPM.BeatToTime(1, musicPlayer.Bpm);
-            GetComponent<Image>().color = Color.Lerp(From, To, lerpValue);
+            m_lerpValue += (Time.deltaTime * m_MusicPlayer.SongSpeed) / BPM.BeatToTime(1, m_MusicPlayer.Bpm);
+            GetComponent<Image>().color = Color.Lerp(m_BeginColor, m_EndColor, m_lerpValue);
         }
 
         public void SetColor(Color color)
         {
-            From = color;
-            Current = color;
+            m_BeginColor = color;
         }
 
         public void LerpToColor(Color color)
         {
-            From = Current;
-            To = color;
-            if (musicPlayer.SongSpeed > 0)
-                lerpValue = 0;
-            else lerpValue = 1;
-        }
 
-        public void OnRelease()
-        {
-            isPressed = false;
-            SetColor(Current);
-            LerpToColor(StaticColor);
+            m_EndColor = color;
+            if (m_MusicPlayer.SongSpeed > 0)
+                m_lerpValue = 0;
+            else m_lerpValue = 1;
         }
     }
 }
