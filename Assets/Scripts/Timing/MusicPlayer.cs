@@ -44,6 +44,7 @@ namespace DDR
             m_AudioSource = GetComponent<AudioSource>();
             m_AudioMixer = m_AudioSource.outputAudioMixerGroup.audioMixer;
             m_previousSpeed = SongSpeed;
+            beatObserverManager.SubScribe(Syncronize, 1);
         }
 
         public void Update()
