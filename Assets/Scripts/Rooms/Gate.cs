@@ -10,7 +10,7 @@ public class Gate : PuzzleElement
     public void Start()
     {
         OnSolveEvent += Open;
-        FindObjectOfType<MusicPlayer>().OnWhole += Bounce;
+        FindObjectOfType<MusicPlayer>().AddBeatListener(Bounce, 1);
     }
 
     private void Bounce()
