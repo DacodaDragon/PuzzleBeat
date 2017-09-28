@@ -1,23 +1,47 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(TouchListener))]
-public class PuzzleTap : PuzzleElement {
+public class PuzzleTap : PuzzleElement
+{
+    /// Beattime in room
+    /// to activate the
+    /// puzzle element .-.
+    [SerializeField]
+    float m_BeatInRoom;
 
-    [SerializeField] Sprite m_spriteDefault;
-    [SerializeField] Sprite m_spritePressed;
-    [SerializeField] Sprite m_spriteActive;
+    /// Tap Visible
+    [SerializeField]
+    float m_BeatVisible;
 
-	void Start () {
-        SpriteRenderer renderer = GetComponent<SpriteRenderer>();
+
+    Animator animator;
+    void Start ()
+    {
+        animator = GetComponent<Animator>();
         TouchListener listener = GetComponent<TouchListener>();
-        listener.onTouchPress += () => { renderer.sprite = m_spritePressed; };
-        listener.onTouchRelease += () => { renderer.sprite = m_spriteActive; };
+        
+        DDR.MusicPlayer musicPlayer = GameObject.Find("_MusicPlayer").GetComponent<DDR.MusicPlayer>();
+        
+        listener.onTouchPress += () => 
+        {
+            animator.SetBool("IsActive", true);
+            animator.SetBool("IsPressed", true);
+        };
+
+        listener.onTouchRelease += () => 
+        {
+            animator.SetBool("IsPressed", false);
+            if (IsSolved == false)
+                Solve();
+        };
+
+        musicPlayer.AddBeatListener
+            (() => { animator.SetTrigger("Bounce"); }, 1);
     }
 
-    private void OnTap()
+    void Update()
     {
-        Destroy(gameObject);
+        DDR.MusicPlayer musicPlayer = GameObject.Find("_MusicPlayer").GetComponent<DDR.MusicPlayer>();
+        animator.speed = Mathf.Abs(musicPlayer.SongSpeed);
     }
 }

@@ -6,26 +6,30 @@ using DDR;
 public class PathTraveler: MonoBehaviour {
 
     [SerializeField]
-    RoomManager m_roomManager;
+    private RoomManager m_roomManager;
     [SerializeField]
-    MusicPlayer m_musicplayer;
+    private MusicPlayer m_musicplayer;
 
-    bool Traveling = false;
+    private float m_TargetRotation;
 
-	void Start () {
+    private bool Traveling = false;
+
+	void Start ()
+    {
         if (!m_roomManager)
             m_roomManager = FindObjectOfType<RoomManager>();
         if (!m_musicplayer)
             m_musicplayer = FindObjectOfType<MusicPlayer>();
     }
 
-	void Update () {
+	void Update ()
+    {
         if (Traveling)
         {
-            Transform2DParams WorldPosition = m_roomManager.GetPositionInRoom(
-                m_musicplayer.TimeInBeats);
+            Transform2DParams WorldPosition = m_roomManager.GetPositionInRoom(m_musicplayer.TimeInBeats);
             transform.position = WorldPosition.position;
-            transform.rotation = WorldPosition.rotation;
+            m_TargetRotation = WorldPosition.rotation.eulerAngles.z;
+            transform.rotation = Quaternion.Euler(0, 0, Mathf.LerpAngle(transform.rotation.eulerAngles.z, m_TargetRotation, 0.2f * m_musicplayer.MixerSpeed));
         }
     }
 

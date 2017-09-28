@@ -9,38 +9,58 @@ public class PuzzleSpinner : PuzzleElement
     SpriteRenderer m_SpriteRenderer;
 
     [SerializeField]
-    Sprite m_SpriteActive;
-    [SerializeField]
-    Sprite m_SpriteInactive;
-
+    float m_AngleToRotate;
     float m_angleOffset;
+    float m_rotationSpeed;
+    float m_previousRotation;
+    float m_angleDelta;
+
+    bool m_rotating;
 
     private void Start()
     {
         m_TouchListener = GetComponent<TouchListener>();
         m_SpriteRenderer = GetComponent<SpriteRenderer>();
-        m_TouchListener.onTouchPress += () => { m_SpriteRenderer.sprite = m_SpriteActive; };
+
         m_TouchListener.onTouchPress += StartRotation;
-        m_TouchListener.onTouchRelease += () => { m_SpriteRenderer.sprite = m_SpriteInactive; };
+        m_TouchListener.onTouchRelease += EndRotation;
     }
 
     void Update()
     {
         if (m_TouchListener.Selected)
-            transform.rotation = Quaternion.Euler(0, 0, GetAngleToTouch() + m_angleOffset);
+            Rotate();
+        else AfterRotate();
     }
 
-    public void StartRotation()
+    private  void StartRotation()
     {
-        m_angleOffset = GetAngleToTouch();
+        m_angleOffset = transform.rotation.z + Vector2DMath.GetAngleBetween(m_TouchListener.GetTouchPosition(), transform.position);
+        Debug.Log("START ROTATING!!");
     }
 
-    public float GetAngleToTouch()
+    private void EndRotation()
     {
-        Vector2 AngleVector = m_TouchListener.GetTouchPosition() - transform.position;
-        float angle = Mathf.Atan2(AngleVector.y, AngleVector.x) * Mathf.Rad2Deg;
-        if (angle < 0)
-            angle += 360;
-        return angle;
+        m_rotationSpeed = m_angleDelta;
+    }
+
+    private void Rotate()
+    {
+        Debug.Log("ROTATING!");
+        float Rotation = Vector2DMath.GetAngleBetween(m_TouchListener.GetTouchPosition(), transform.position)
+            - m_angleOffset;
+        m_angleDelta = m_previousRotation - Rotation;
+        m_previousRotation = Rotation;
+        transform.rotation = Quaternion.Euler(0, 0, Rotation);
+
+        m_AngleToRotate -= m_angleDelta;
+        if (m_AngleToRotate < 0)
+            Solve();
+    }
+
+    private void AfterRotate()
+    {
+        m_rotationSpeed *= 0.9f;
+        transform.Rotate(new Vector3(0, 0, 1), -m_rotationSpeed);
     }
 }

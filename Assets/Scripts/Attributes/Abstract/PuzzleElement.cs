@@ -8,6 +8,12 @@ public class PuzzleElement : MonoBehaviour {
 
     private bool m_IsSolved;
     private OnSolveDelegate OnSolve;
+    protected Room room;
+
+    public void SetRoomReference(Room room)
+    {
+        this.room = room;
+    }
 
     public event OnSolveDelegate OnSolveEvent
     {

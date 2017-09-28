@@ -8,15 +8,29 @@ public class Room : MonoBehaviour
     [SerializeField] private string m_IDString;
     [SerializeField] private int m_IDNumber;
     [SerializeField] private int m_LengthInBeats;
+    [SerializeField] private float m_TimeOffsetInBeats;
+    [SerializeField] private int m_PuzzleAmount;
+    [SerializeField] private int m_PuzzlesToSolve;
+    [SerializeField] private int m_PuzzleToSolveSlack;
 
     private RoomPath m_roomPath;
     private Gate m_gate;
+    bool m_isOpenWithoutGate = false;
 
     public int ID { get { return m_IDNumber; } }
     public int BeatLength { get { return m_LengthInBeats; } set { m_LengthInBeats = value; } }
     public RoomPath Path { get { return m_roomPath; } }
     public PathNode EndNode { get { return m_roomPath.EndNode; } }
     public PathNode StartNode { get { return m_roomPath.StartNode; } }
+    public bool IsOpen { get { if (m_gate) return m_gate.IsOpen; else return m_isOpenWithoutGate; } }
+    public float TimeOffsetInBeats { get { return m_TimeOffsetInBeats; } set { m_TimeOffsetInBeats = value; } }
+
+    public void Open()
+    {
+        if (m_gate)
+            m_gate.Open();
+        else m_isOpenWithoutGate = true;
+    }
 
     void Awake()
     {
@@ -56,6 +70,19 @@ public class Room : MonoBehaviour
 
     private void HookPuzzleElements(PuzzleElement[] elements)
     {
-        // [TODO] Hook Puzzle elements to gate?
+        m_PuzzleAmount = elements.Length;
+        m_PuzzlesToSolve = elements.Length;
+        for (int i = 0; i < elements.Length; i++)
+        {
+            elements[i].SetRoomReference(this);
+            elements[i].OnSolveEvent += (PuzzleElement element) =>
+            {
+                m_PuzzlesToSolve -= 1;
+                if (m_PuzzlesToSolve < m_PuzzleToSolveSlack)
+                {
+                    m_gate.Open();
+                }
+            };
+        }
     }
 }

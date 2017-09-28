@@ -74,15 +74,32 @@ public class LevelGenerator
 
     private IEnumerator<YieldInstruction> GenerateLevelRoutine(int[] IDs)
     {
+        GameObject Parent = new GameObject("Rooms");
         for (int i = 0; i < IDs.Length; i++)
         {
             int ID = IDs[i];
             Room room = FindRoom(ID);
-            CreateRoom(room).Disable();
+            Room generatedRoom = CreateRoom(room);
+            generatedRoom.Disable();
+            generatedRoom.transform.SetParent(Parent.transform);
             yield return new WaitForEndOfFrame();
         }
+
+        SetAllTimeoffsets();
+        Parent.transform.position = new Vector3(100, 100, 100);
         if (onLevelLoadEnded != null)
             onLevelLoadEnded.Invoke();
+
+    }
+
+    private void SetAllTimeoffsets()
+    {
+        float offset = 0;
+        for (int i = 0; i < m_rooms.Count; i++)
+        {
+            m_rooms[i].TimeOffsetInBeats = offset;
+            offset += m_rooms[i].BeatLength;
+        }
     }
 
     private bool CheckPrefabs()
@@ -108,15 +125,16 @@ public class LevelGenerator
         // First room
         if (m_rooms.Count == 0)
         {
-            room.transform.position = Vector3.zero;
-            room.transform.rotation = Quaternion.Euler(0, 0, 0);
+            room.transform.localPosition = Vector3.zero;
+            room.transform.localRotation = Quaternion.Euler(0, 0, 0);
             m_rooms.Add(room);
             return;
         }
 
         RoomPath prevRoom = m_rooms[m_rooms.Count - 1].Path;
-        room.transform.position = RoomPathUtility.GetLatestNodePosition(prevRoom);
-        room.transform.rotation = Quaternion.Euler(0, 0, RoomPathUtility.GeLatestNodeAngle(prevRoom));
+        room.transform.localPosition = RoomPathUtility.GetLatestNodePosition(prevRoom);
+        room.transform.localRotation = Quaternion.Euler(0, 0, 
+            RoomPathUtility.GetLatestNodeAngle(prevRoom) - RoomPathUtility.GetFirstNodeAngle(room.Path));
         m_rooms.Add(room);
 
     }

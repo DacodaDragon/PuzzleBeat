@@ -24,7 +24,7 @@ static class RoomPathEditorUtility
         newNode.transform.SetParent(roomPath.gameObject.transform);
         newNode.transform.localPosition = Vector2.zero;
         newNode.name = "[" + roomPath.Path.Count + "] Path Node";
-        newNode.hideFlags = HideFlags.HideInHierarchy;
+        //newNode.hideFlags = HideFlags.HideInHierarchy;
         if (roomPath.Path.Count > 0)
         {
             newNode.transform.localPosition = roomPath.Path[roomPath.Path.Count - 1].LocalPosition;

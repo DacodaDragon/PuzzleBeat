@@ -51,7 +51,7 @@ public class TouchListener : MonoBehaviour
             onTouchMultiTap(Input.GetTouch(ID).tapCount);
     }
 
-    public void OnTouchLost(int ID)
+    private void OnTouchLost(int ID)
     {
         if (ID == m_TouchID)
         {

@@ -9,12 +9,15 @@ namespace Android.Touchmanager
     public delegate void OnTouchLost(int id);
 
     public class TouchManager : MonoBehaviour
-    {
+    { 
         public OnTouchLost onTouchLost;
         List<int> m_activeTouches = new List<int>();
 
         void Update()
         {
+            // Function has to be updated all frames..
+            // Because checking changes is kinda
+            // complex anyway..
             UpdateTouches();
         }
 
@@ -25,7 +28,7 @@ namespace Android.Touchmanager
             List<int> IDNew = new List<int>();
             List<int> IDRemove = new List<int>();
             List<int> IDAdd = new List<int>();
-
+            
             // We work with touch finger ID's
             // Not the touch structs themselves
             Touch[] touches = Input.touches;
@@ -34,14 +37,23 @@ namespace Android.Touchmanager
                 IDNew.Add(touches[i].fingerId);
             }
 
-            // If the list didn't change, don't bother.
+            // If the list didn't change in length
+            // Nor its elements or its order, don't 
+            // bother going through the rest.
             if (IDNew.SequenceEqual(IDOld))
                 return;
 
-            IDAdd = FilterOut(IDOld, IDNew);
-            IDRemove = FilterOut(IDNew, IDOld);
+            // Filter out all old items from new items.
+            // Results in a list with IDs that are new
+            // for our list
+            IDAdd = ArrayUtil.FilterOut(IDOld, IDNew);
 
-            // Add whatever is new
+            // Filter out all new items for old items.
+            // Results in a list with IDs that are
+            // left over in our list.
+            IDRemove = ArrayUtil.FilterOut(IDNew, IDOld);
+
+            // Add whatever is new 
             for (int i = 0; i < IDAdd.Count; i++)
             {
                 OnNewTouch(IDAdd[i]);
@@ -55,15 +67,6 @@ namespace Android.Touchmanager
                     onTouchLost(IDRemove[i]);
                 m_activeTouches.Remove(IDRemove[i]);
             }
-        }
-        private List<t> FilterOut<t>(List<t> elements, List<t> from)
-        {
-            List<t> E = new List<t>(from);
-            for (int i = 0; i < elements.Count; i++)
-            {
-                E.Remove(elements[i]);
-            }
-            return E;
         }
 
         public Touch GetTouch(int ID)

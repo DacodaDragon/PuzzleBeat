@@ -2,37 +2,27 @@
 using System;
 using DDR;
 
-public class Gate : PuzzleElement
+public class Gate : MonoBehaviour
 {
-    private int MaxSolveAmount = 0;
-    private int CurrentSolveAmount = 0;
+    Animator animator;
+    bool isOpen = false;
+    public bool IsOpen { get { return isOpen; } }
 
-    public void Start()
+    private void Start()
     {
-        OnSolveEvent += Open;
-        FindObjectOfType<MusicPlayer>().AddBeatListener(Bounce, 1);
+        animator = GetComponent<Animator>();
+        animator.SetBool("Open", false);
+        FindObjectOfType<MusicPlayer>().AddBeatListener(() => { animator.SetTrigger("Bounce"); }, 1);
     }
 
-    private void Bounce()
+    public void Open()
     {
-        // Bounce (for animation purposes)
-    }
+        // Don't open if we are already open..
+        if (IsOpen)
+            return;
 
-    // Its kind of ugle because we hook it in the
-    // puzzleelements's onSolve event.. I'll patch
-    // this up some other time, right now it just
-    // needs to work.
-    private void Open(PuzzleElement element)
-    {
-        // [TODO] Open Gate
-        // Open Gate Animation
-        // Disable life sequence thing
-    }
-
-    public void SolveReciever(PuzzleElement element)
-    {
-        CurrentSolveAmount += 1;
-        if (CurrentSolveAmount == MaxSolveAmount)
-            Solve();
+        animator.SetBool("Open", true);
+        animator.SetTrigger("Opening");
+        isOpen = true;
     }
 }

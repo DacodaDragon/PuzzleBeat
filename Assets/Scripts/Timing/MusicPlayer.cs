@@ -25,11 +25,13 @@ namespace DDR
         public float Time { get { return m_time; } }
         public float TimeInBeats { get { return BPM.TimeToBeat(m_time - m_timeOffset,m_bmp); } }
         public float SongSpeed { get { return m_AudioSource.pitch * GetMixerPitch(); } }
+        public float MixerSpeed { get { return GetMixerPitch(); } }
         public float Bpm { get { return m_bmp; } }
         public float DeltaTime { get { return m_deltaTime; } }
 
-        private float m_previousSpeed;
         private bool SpeedChanged { get { return m_previousSpeed != SongSpeed; } }
+
+        private float m_previousSpeed;
 
         // Technically not something we want here (Perhaps we need a Time/TimeRhythm Class?)
         BeatObserverManager beatObserverManager = new BeatObserverManager();
@@ -95,12 +97,6 @@ namespace DDR
             m_time = m_AudioSource.time;
         }
 
-        /// <param name="Pitch">float value from -3 to 3 </param>
-        public void SetPitch(float pitch)
-        {
-            m_AudioSource.pitch = pitch;
-        }
-
         private float GetMixerPitch()
         {
             if (m_AudioMixer)
@@ -108,7 +104,8 @@ namespace DDR
                 float pitch;
                 if (m_AudioMixer.GetFloat("Pitch", out pitch)) return pitch;
             }
-            // play at normal speed if no mixer is connected or "Pitch" parameter isn't exposed / doesn't exist
+            // play at normal speed if no mixer is connected or "Pitch" 
+            // parameter isn't exposed / doesn't exist
             return 1;
         }
 

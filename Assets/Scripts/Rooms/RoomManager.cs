@@ -2,8 +2,15 @@
 using System.Linq;
 using UnityEngine;
 
+public delegate void OnRoomChangeDelegate(int roomNumber);
+
 public class RoomManager : MonoBehaviour
 {
+    OnRoomChangeDelegate onRoomChange;
+
+    public event OnRoomChangeDelegate OnRoomChange
+    { add { onRoomChange += value; } remove { onRoomChange -= onRoomChange; } }
+
     Room[] m_rooms;
     int m_currentRoom = -1;
 
@@ -23,6 +30,19 @@ public class RoomManager : MonoBehaviour
 
         if (i != m_currentRoom)
         {
+            // Notify current room
+            if (onRoomChange != null)
+                onRoomChange.Invoke(i);
+
+            if (i - 1 >= 0)
+            {
+                if (!m_rooms[i - 1].IsOpen)
+                {
+                    GameObject.Find("_MusicPlayer").GetComponent<PitchController>().PlayCurve();
+                    m_rooms[i - 1].Open();
+                }
+            }
+
             ActivateRoomsection(i);
             m_currentRoom = i;
         }
@@ -30,18 +50,36 @@ public class RoomManager : MonoBehaviour
         return m_rooms[i].GetPosition(Beat);
     }
 
-    private void ActivateRoomsection(int RoomNumber)
+    private void ActivateRoomsection(int roomNumber)
     {
-        Debug.Log("Room: " + RoomNumber);
+        Debug.Log("Room: " + roomNumber);
 
-        if (RoomNumber - 2 >= 0)
-            m_rooms[RoomNumber - 2].Disable();
-        if (RoomNumber - 1 >= 0)
-            m_rooms[RoomNumber - 1].Enable();
+        // Failsafe
+        // Deactivate all rooms if we we skip one or multiple rooms.
+        if (Mathf.Abs(roomNumber - m_currentRoom) > 1)
+            DeactivateAllRooms();
 
-        m_rooms[RoomNumber].Enable();
+        // Disable the room before the room we leave
+        if (roomNumber - 2 >= 0)
+            m_rooms[roomNumber - 2].Disable();
 
-        if (RoomNumber + 1 < m_rooms.Length)
-            m_rooms[RoomNumber+1].Enable();
+        // Activate the room behind us
+        if (roomNumber - 1 >= 0)
+            m_rooms[roomNumber - 1].Enable();
+
+        // Activate the room we are in
+        m_rooms[roomNumber].Enable();
+
+        // Activate the room in front of us
+        if (roomNumber + 1 < m_rooms.Length)
+            m_rooms[roomNumber+1].Enable();
+    }
+
+    private void DeactivateAllRooms()
+    {
+        for (int i = 0; i < m_rooms.Length; i++)
+        {
+            m_rooms[i].Disable();
+        }
     }
 }
