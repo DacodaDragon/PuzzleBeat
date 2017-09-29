@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class RoomPath : MonoBehaviour
@@ -26,5 +25,4 @@ public class RoomPath : MonoBehaviour
             for (int i = 0; i < pathNodes.Count - 1; i++)
                 Gizmos.DrawLine(pathNodes[i].Position, pathNodes[i + 1].Position);
     }
-
 }

@@ -43,5 +43,6 @@ public class RoomPathUtility
             s.Add(roomPath.Path[i].Position);
         }
         return s.ToArray();
+
     }
 }

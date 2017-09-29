@@ -1,18 +1,17 @@
 ﻿using UnityEngine;
-using System;
 using DDR;
 
 public class Gate : MonoBehaviour
 {
-    Animator animator;
-    bool isOpen = false;
-    public bool IsOpen { get { return isOpen; } }
+    Animator m_Animator;
+    bool m_isOpen = false;
+    public bool IsOpen { get { return m_isOpen; } }
 
     private void Start()
     {
-        animator = GetComponent<Animator>();
-        animator.SetBool("Open", false);
-        FindObjectOfType<MusicPlayer>().AddBeatListener(() => { animator.SetTrigger("Bounce"); }, 1);
+        m_Animator = GetComponent<Animator>();
+        m_Animator.SetBool("Open", false);
+        FindObjectOfType<MusicPlayer>().AddBeatListener(() => { m_Animator.SetTrigger("Bounce"); }, 1);
     }
 
     public void Open()
@@ -21,8 +20,8 @@ public class Gate : MonoBehaviour
         if (IsOpen)
             return;
 
-        animator.SetBool("Open", true);
-        animator.SetTrigger("Opening");
-        isOpen = true;
+        m_Animator.SetBool("Open", true);
+        m_Animator.SetTrigger("Opening");
+        m_isOpen = true;
     }
 }

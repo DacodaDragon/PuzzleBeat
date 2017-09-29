@@ -1,18 +1,26 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using DDR;
 
 public delegate void OnSolveDelegate(PuzzleElement element);
 
 public class PuzzleElement : MonoBehaviour {
 
-    private bool m_IsSolved;
+    private bool            m_IsSolved;
     private OnSolveDelegate OnSolve;
-    protected Room room;
+    private Room            m_room;
+    private MusicPlayer     m_musicPlayer;
+
+    protected MusicPlayer musicPlayer { get { return m_musicPlayer; } }
+    protected Room room { get { return m_room; } }
 
     public void SetRoomReference(Room room)
     {
-        this.room = room;
+        m_room = room;
+    }
+
+    public void SetMusicplayerReference(MusicPlayer musicPlayer)
+    {
+        m_musicPlayer = musicPlayer;
     }
 
     public event OnSolveDelegate OnSolveEvent

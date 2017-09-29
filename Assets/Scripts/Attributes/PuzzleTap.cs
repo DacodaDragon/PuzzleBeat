@@ -3,9 +3,6 @@
 [RequireComponent(typeof(TouchListener))]
 public class PuzzleTap : PuzzleElement
 {
-    /// Beattime in room
-    /// to activate the
-    /// puzzle element .-.
     [SerializeField]
     float m_BeatInRoom;
 
@@ -19,8 +16,6 @@ public class PuzzleTap : PuzzleElement
     {
         animator = GetComponent<Animator>();
         TouchListener listener = GetComponent<TouchListener>();
-        
-        DDR.MusicPlayer musicPlayer = GameObject.Find("_MusicPlayer").GetComponent<DDR.MusicPlayer>();
         
         listener.onTouchPress += () => 
         {

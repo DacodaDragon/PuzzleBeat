@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(TouchListener))]
 public class PuzzleSpinner : PuzzleElement
@@ -36,7 +34,6 @@ public class PuzzleSpinner : PuzzleElement
     private  void StartRotation()
     {
         m_angleOffset = transform.rotation.z + Vector2DMath.GetAngleBetween(m_TouchListener.GetTouchPosition(), transform.position);
-        Debug.Log("START ROTATING!!");
     }
 
     private void EndRotation()
@@ -46,7 +43,6 @@ public class PuzzleSpinner : PuzzleElement
 
     private void Rotate()
     {
-        Debug.Log("ROTATING!");
         float Rotation = Vector2DMath.GetAngleBetween(m_TouchListener.GetTouchPosition(), transform.position)
             - m_angleOffset;
         m_angleDelta = m_previousRotation - Rotation;

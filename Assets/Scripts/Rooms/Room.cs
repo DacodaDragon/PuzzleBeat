@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(RoomPath))]
 public class Room : MonoBehaviour
@@ -51,8 +49,8 @@ public class Room : MonoBehaviour
 
     public Transform2DParams GetPosition(float beat)
     {
-        Vector2[] s = RoomPathUtility.ConvertToVectors(m_roomPath);
-        float SegmentCount = s.Length - 1;
+        Vector2[] VectorPath = RoomPathUtility.ConvertToVectors(m_roomPath);
+        float SegmentCount = VectorPath.Length - 1;
         float SegmentLength = BeatLength / SegmentCount;
 
         int segment = 0;
@@ -63,8 +61,8 @@ public class Room : MonoBehaviour
             segment++;
         }
 
-        Vector2 position = Vector2.Lerp(s[segment], s[segment + 1], DistanceToTravelInSegment / SegmentLength);
-        Quaternion rotation = Quaternion.Euler(0, 0, Vector2DMath.GetAngleBetween(s[segment], s[segment + 1]));
+        Vector2 position = Vector2.Lerp(VectorPath[segment], VectorPath[segment + 1], DistanceToTravelInSegment / SegmentLength);
+        Quaternion rotation = Quaternion.Euler(0, 0, Vector2DMath.GetAngleBetween(VectorPath[segment], VectorPath[segment + 1]));
         return new Transform2DParams(position, rotation);
     }
 
@@ -75,6 +73,7 @@ public class Room : MonoBehaviour
         for (int i = 0; i < elements.Length; i++)
         {
             elements[i].SetRoomReference(this);
+            elements[i].SetMusicplayerReference(FindObjectOfType<DDR.MusicPlayer>());
             elements[i].OnSolveEvent += (PuzzleElement element) =>
             {
                 m_PuzzlesToSolve -= 1;
