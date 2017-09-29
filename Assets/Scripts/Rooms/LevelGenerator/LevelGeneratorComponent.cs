@@ -44,13 +44,10 @@ public class LevelGeneratorComponent : MonoBehaviour
         if (lv.Failed)
         {
             Debug.LogError(lv.error.Message);
-            if (OnFail != null) OnFail.Invoke(lv.error.Message);
+            OnFail?.Invoke(lv.error.Message);
             return;
         }
-        else if (OnComplete != null)
-        {
-            m_roomManager.AddRooms(lv.Level);
-            OnComplete.Invoke();
-        }
+        OnComplete?.Invoke();
+        m_roomManager.AddRooms(lv.Level);
     }
 }

@@ -36,8 +36,7 @@ public class PuzzleElement : MonoBehaviour {
     {
         if (!m_IsSolved)
         {
-            if (OnSolve != null)
-                OnSolve(this);
+            OnSolve?.Invoke(this);
             m_IsSolved = true;
         }
     }

@@ -46,8 +46,7 @@
 
         private void Trigger()
         {
-            if (m_OnTrigger != null)
-                m_OnTrigger.Invoke();
+            m_OnTrigger?.Invoke();
         }
     }
 }

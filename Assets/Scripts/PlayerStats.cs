@@ -21,9 +21,7 @@ public class PlayerStats : MonoBehaviour
             m_MaxLives = value;
             if (MaxLives > 0)
                 return;
-            if (onPlayerDeath != null)
-                return;
-            onPlayerDeath.Invoke();
+            onPlayerDeath?.Invoke();
         }
     }
 

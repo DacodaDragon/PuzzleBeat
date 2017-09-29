@@ -13,7 +13,7 @@ public class TouchListener : MonoBehaviour
     public bool Selected { get { return m_Touched; } }
     private TouchManager manager;
 
-    public OnTouchPress onTouchPress;
+    public OnTouchPress onTouchPress; 
     public OnTouchRelease onTouchRelease;
     public OnTouchTap onTouchTap;
     public OnTouchMultiTap onTouchMultiTap;
@@ -42,13 +42,9 @@ public class TouchListener : MonoBehaviour
         m_Touched = true;
         m_TouchID = ID;
         manager.onTouchLost += OnTouchLost;
-
-        if (onTouchPress != null)
-            onTouchPress();
-        if (onTouchTap != null)
-            onTouchTap();
-        if (onTouchMultiTap != null)
-            onTouchMultiTap(Input.GetTouch(ID).tapCount);
+        onTouchPress?.Invoke();
+        onTouchTap?.Invoke();
+        onTouchMultiTap?.Invoke(Input.GetTouch(ID).tapCount);
     }
 
     private void OnTouchLost(int ID)
@@ -57,9 +53,7 @@ public class TouchListener : MonoBehaviour
         {
             m_Touched = false;
             manager.onTouchLost -= OnTouchLost;
-
-            if (onTouchRelease != null)
-                onTouchRelease();
+            onTouchRelease?.Invoke();
         }
     }
 }

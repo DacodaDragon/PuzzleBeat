@@ -31,8 +31,7 @@ public class RoomManager : MonoBehaviour
         if (i != m_currentRoom)
         {
             // Notify current room
-            if (onRoomChange != null)
-                onRoomChange.Invoke(i);
+            onRoomChange?.Invoke(i);
 
             if (i - 1 >= 0)
             {

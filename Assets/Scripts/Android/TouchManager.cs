@@ -61,8 +61,7 @@ namespace Android.Touchmanager
             // Add whatever is old
             for (int i = 0; i < IDRemove.Count; i++)
             {
-                if (onTouchLost != null)
-                    onTouchLost(IDRemove[i]);
+                onTouchLost?.Invoke(IDRemove[i]);
                 m_activeTouches.Remove(IDRemove[i]);
             }
         }

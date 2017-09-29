@@ -87,9 +87,7 @@ public class LevelGenerator
 
         SetAllTimeoffsets();
         Parent.transform.position = new Vector3(100, 100, 100);
-        if (onLevelLoadEnded != null)
-            onLevelLoadEnded.Invoke();
-
+        onLevelLoadEnded?.Invoke();
     }
 
     private void SetAllTimeoffsets()
