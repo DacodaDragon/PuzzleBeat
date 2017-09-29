@@ -15,13 +15,7 @@ public class PitchController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
-        if (Input.GetKeyDown(KeyCode.F1))
-        {
-            PlayCurve();
-        }
-
-        if (m_IsPlaying)
+        if (m_MusicPlayer.IsPlaying)
         {
             m_Time += Time.deltaTime * m_MusicPlayer.MixerSpeed;
             m_AudioSource.pitch = Curve.Evaluate(m_Time);

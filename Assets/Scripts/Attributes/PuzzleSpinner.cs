@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System;
+
 [RequireComponent(typeof(TouchListener))]
 public class PuzzleSpinner : PuzzleElement
 {

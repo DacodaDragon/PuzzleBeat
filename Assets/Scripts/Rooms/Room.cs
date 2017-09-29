@@ -55,6 +55,7 @@ public class Room : MonoBehaviour
 
         int segment = 0;
         float DistanceToTravelInSegment = beat;
+
         while (DistanceToTravelInSegment > SegmentLength)
         {
             DistanceToTravelInSegment -= SegmentLength;

@@ -28,13 +28,14 @@ namespace DDR
         public float MixerSpeed { get { return GetMixerPitch(); } }
         public float Bpm { get { return m_bmp; } }
         public float DeltaTime { get { return m_deltaTime; } }
+        public bool IsPlaying { get { return m_playing; } }
 
         private bool SpeedChanged { get { return m_previousSpeed != SongSpeed; } }
 
         private float m_previousSpeed;
 
         // Technically not something we want here (Perhaps we need a Time/TimeRhythm Class?)
-        BeatObserverManager beatObserverManager = new BeatObserverManager();
+        BeatObserverManager m_BeatManager = new BeatObserverManager();
 
         private void Awake()
         {
@@ -46,15 +47,21 @@ namespace DDR
             m_AudioSource = GetComponent<AudioSource>();
             m_AudioMixer = m_AudioSource.outputAudioMixerGroup.audioMixer;
             m_previousSpeed = SongSpeed;
-            beatObserverManager.SubScribe(Syncronize, 1);
+            m_BeatManager.SubScribe(Syncronize, 1);
         }
 
         public void Update()
         {
+            if (Input.GetKeyDown(KeyCode.F1))
+                Pause();
+
+            if (Input.GetKeyDown(KeyCode.F2))
+                UnPause();
+
             if (m_playing)
             {
                 UpdateTime();
-                beatObserverManager.Update(TimeInBeats);
+                m_BeatManager.Update(TimeInBeats);
             }
             m_previousSpeed = SongSpeed;
         }
@@ -111,12 +118,12 @@ namespace DDR
 
         public void AddBeatListener(OnBeatDelegate function, float measure)
         {
-            beatObserverManager.SubScribe(function, measure);
+            m_BeatManager.SubScribe(function, measure);
         }
 
         public void RemoveBeatListener(OnBeatDelegate function, float measure)
         {
-            beatObserverManager.UnSubscribe(function, measure);
+            m_BeatManager.UnSubscribe(function, measure);
         }
     }
 }

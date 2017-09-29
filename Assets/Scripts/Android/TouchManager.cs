@@ -13,9 +13,6 @@ namespace Android.Touchmanager
 
         void Update()
         {
-            // Function has to be updated all frames..
-            // Because checking changes is kinda
-            // complex anyway..
             UpdateTouches();
         }
 
@@ -58,7 +55,6 @@ namespace Android.Touchmanager
                 m_activeTouches.Add(IDAdd[i]);
             }
 
-            // Add whatever is old
             for (int i = 0; i < IDRemove.Count; i++)
             {
                 onTouchLost?.Invoke(IDRemove[i]);
